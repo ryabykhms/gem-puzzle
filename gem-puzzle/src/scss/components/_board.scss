@@ -1,0 +1,7 @@
+.board {
+  @include flex-center();
+  flex-wrap: wrap;
+  column-gap: 1%;
+  width: 500px;
+  height: 500px;
+}

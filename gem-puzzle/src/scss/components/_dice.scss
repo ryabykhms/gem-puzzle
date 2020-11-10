@@ -1,0 +1,8 @@
+.dice {
+  @include flex-center();
+  background-color: #fff;
+  border: 1px solid #000;
+  &--empty {
+    border-color: transparent;
+  }
+}
