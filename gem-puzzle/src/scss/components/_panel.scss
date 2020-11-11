@@ -1,3 +1,5 @@
 .panel {
   @include flex-center();
+  width: 300px;
+  justify-content: space-between;
 }
