@@ -1,7 +1,8 @@
 import Modal from './Modal';
 export default class GameController {
-  constructor(game) {
+  constructor(game, storage) {
     this.game = game;
+    this.storage = storage;
     this.sizes = this._generateSizes();
     this.modal = undefined;
     this.size = 4;
@@ -34,6 +35,29 @@ export default class GameController {
       'click',
       this._handlePause.bind(this)
     );
+    this.game.menuObj.save.addEventListener(
+      'click',
+      this._handleSave.bind(this)
+    );
+    this.game.menuObj.load.addEventListener(
+      'click',
+      this._handleLoad.bind(this)
+    );
+  }
+
+  _handleSave(e) {
+    this.storage.set('last_game', {
+      size: this.size,
+      moves: this.game.moves,
+      time: this.game.time,
+      board: this.game.boardState,
+    });
+  }
+
+  _handleLoad(e) {
+    const { size, moves, time, board } = this.storage.get('last_game');
+    this.game.reload(size, moves, time, board);
+    this.size = size;
   }
 
   _handleNewGame(e) {

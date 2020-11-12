@@ -23,6 +23,15 @@ export default class Game {
     this._startTimer();
   }
 
+  reload(size, moves, time, boardState) {
+    this.boardState = boardState;
+    this.time = time;
+    this.moves = moves;
+    this.size = size;
+    this._clearScreen();
+    this._initScreen(size, true);
+  }
+
   _clearScreen() {
     this.screenObj.panel.remove();
     this.screenObj.board.remove();
@@ -80,6 +89,13 @@ export default class Game {
           dice.style.order = emptyDiceOrder;
           emptyDice.style.order = diceOrder;
           this.moves++;
+          [
+            this.boardState[0][diceOrder - 1],
+            this.boardState[0][emptyDiceOrder - 1],
+          ] = [
+            this.boardState[0][emptyDiceOrder - 1],
+            this.boardState[0][diceOrder - 1],
+          ];
           this.panelObj.movesValue.textContent = this.moves;
         }
       }
@@ -94,13 +110,18 @@ export default class Game {
     return isOrderAbove || isOrderBelow || isOrderLeft || isOrderRight;
   }
 
-  _initScreen(size) {
-    const { dices, state } = this._initDices(size);
-    this.boardState.length = 0;
-    this.boardState.push(state);
+  _initScreen(size, isReload) {
+    if (!isReload) {
+      this._initBoardState(size);
+      this.time = 0;
+      this.moves = 0;
+    }
+    const dices = this._initDices(size);
     this.boardObj = new Board(size, dices);
     this.boardObj.board.addEventListener('click', this._handleMoves.bind(this));
     this.panelObj = new Panel();
+    this.panelObj.movesValue.textContent = this.moves;
+    this.panelObj.timeValue.textContent = this.time;
     const isMenuExists = this.menuObj !== undefined;
     if (!isMenuExists) {
       this.menuObj = new Menu();
@@ -110,20 +131,24 @@ export default class Game {
       this.panelObj.panel,
       this.boardObj.board
     );
-    this.time = 0;
-    this.moves = 0;
     document.body.prepend(this.screenObj.screen);
+  }
+
+  _initBoardState(boardSize) {
+    const state = this._randomGeneration(boardSize);
+    this.boardState.length = 0;
+    this.boardState.push(state);
   }
 
   _initDices(boardSize) {
     const dices = [];
     const diceSize = Math.round(100 / boardSize) - 2;
-    const state = this._randomGeneration(boardSize);
+    const state = this.boardState[0];
     state.forEach((item, i) => {
       const dice = new Dice(diceSize, item, i + 1, item === 0).dice;
       dices.push(dice);
     });
-    return { dices, state };
+    return dices;
   }
 
   _startTimer() {
