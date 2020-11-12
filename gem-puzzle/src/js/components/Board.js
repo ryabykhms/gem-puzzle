@@ -1,15 +1,15 @@
 export default class Board {
-  constructor(size, dices) {
+  constructor(size, puzzles) {
     this.size = size;
-    this.dices = dices;
+    this.puzzles = puzzles;
     this._createBoard();
   }
 
   _createBoard() {
     this.board = document.createElement('div');
     this.board.classList.add('board');
-    this.dices.forEach((dice) => {
-      this.board.append(dice);
+    this.puzzles.forEach((puzzle) => {
+      this.board.append(puzzle);
     });
   }
 

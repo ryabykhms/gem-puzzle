@@ -1,5 +1,5 @@
 import Board from './Board';
-import Dice from './Dice';
+import Puzzle from './Puzzle';
 import Menu from './Menu';
 import Panel from './Panel';
 import Screen from './Screen';
@@ -84,24 +84,24 @@ export default class Game {
 
   _handleMoves(e) {
     if (!this.isPause && !this._checkWin()) {
-      const dice = e.target;
+      const puzzle = e.target;
       if (
-        dice.classList.contains('dice') &&
-        !dice.classList.contains('dice--empty')
+        puzzle.classList.contains('puzzle') &&
+        !puzzle.classList.contains('puzzle--empty')
       ) {
-        const emptyDice = document.querySelector('.dice--empty');
-        const diceOrder = +dice.style.order;
-        const emptyDiceOrder = +emptyDice.style.order;
-        if (this._isEmptyNear(diceOrder, emptyDiceOrder, this.size)) {
-          dice.style.order = emptyDiceOrder;
-          emptyDice.style.order = diceOrder;
+        const emptypuzzle = document.querySelector('.puzzle--empty');
+        const puzzleOrder = +puzzle.style.order;
+        const emptypuzzleOrder = +emptypuzzle.style.order;
+        if (this._isEmptyNear(puzzleOrder, emptypuzzleOrder, this.size)) {
+          puzzle.style.order = emptypuzzleOrder;
+          emptypuzzle.style.order = puzzleOrder;
           this.moves++;
           [
-            this.boardState[0][diceOrder - 1],
-            this.boardState[0][emptyDiceOrder - 1],
+            this.boardState[0][puzzleOrder - 1],
+            this.boardState[0][emptypuzzleOrder - 1],
           ] = [
-            this.boardState[0][emptyDiceOrder - 1],
-            this.boardState[0][diceOrder - 1],
+            this.boardState[0][emptypuzzleOrder - 1],
+            this.boardState[0][puzzleOrder - 1],
           ];
           this.panelObj.movesValue.textContent = this.moves;
         }
@@ -145,8 +145,8 @@ export default class Game {
       this.moves = 0;
     }
     this._initWinState(size);
-    const dices = this._initDices(size);
-    this.boardObj = new Board(size, dices);
+    const puzzles = this._initpuzzles(size);
+    this.boardObj = new Board(size, puzzles);
     this.panelObj = new Panel();
     this.panelObj.movesValue.textContent = this.moves;
     this.panelObj.timeValue.textContent = this.time;
@@ -176,19 +176,19 @@ export default class Game {
     img.height = heightBoard;
     div.append(img);
     this.screenObj.screen.append(div);
-    document.querySelectorAll('.dice').forEach((dice, i) => {
-      const width = dice.clientWidth;
-      const height = dice.clientHeight;
-      dice.style.backgroundImage = `url(${imageUrl})`;
-      dice.style.backgroundSize = `${widthBoard}px ${heightBoard}px`;
+    document.querySelectorAll('.puzzle').forEach((puzzle, i) => {
+      const width = puzzle.clientWidth;
+      const height = puzzle.clientHeight;
+      puzzle.style.backgroundImage = `url(${imageUrl})`;
+      puzzle.style.backgroundSize = `${widthBoard}px ${heightBoard}px`;
       let left = width * ((this.boardState[0][i] - 1) % size);
       let top = height * Math.floor((this.boardState[0][i] - 1) / size);
-      if (dice.classList.contains('dice--empty')) {
+      if (puzzle.classList.contains('puzzle--empty')) {
         left = width * ((this.boardState[0].length - 1) % size);
         top = height * Math.floor((this.boardState[0].length - 1) / size);
-        dice.style.opacity = 0.3;
+        puzzle.style.opacity = 0.3;
       }
-      dice.style.backgroundPosition = `-${left}px -${top}px`;
+      puzzle.style.backgroundPosition = `-${left}px -${top}px`;
     });
   }
 
@@ -209,16 +209,16 @@ export default class Game {
     this.boardState.push(state);
   }
 
-  _initDices(boardSize) {
-    const dices = [];
-    const diceSize = Math.round(100 / boardSize) - 2;
+  _initpuzzles(boardSize) {
+    const puzzles = [];
+    const puzzleSize = Math.round(100 / boardSize) - 2;
     const state = this.boardState[0];
 
     state.forEach((item, i) => {
-      const dice = new Dice(diceSize, item, i + 1, item === 0).dice;
-      dices.push(dice);
+      const puzzle = new Puzzle(puzzleSize, item, i + 1, item === 0).puzzle;
+      puzzles.push(puzzle);
     });
-    return dices;
+    return puzzles;
   }
 
   _startTimer() {

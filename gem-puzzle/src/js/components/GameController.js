@@ -50,24 +50,24 @@ export default class GameController {
 
   _handleMoves(e) {
     if (!this.isPause && !this._isWin()) {
-      const dice = e.target;
+      const puzzle = e.target;
       if (
-        dice.classList.contains('dice') &&
-        !dice.classList.contains('dice--empty')
+        puzzle.classList.contains('puzzle') &&
+        !puzzle.classList.contains('puzzle--empty')
       ) {
-        const emptyDice = document.querySelector('.dice--empty');
-        const diceOrder = +dice.style.order;
-        const emptyDiceOrder = +emptyDice.style.order;
-        if (this._isEmptyNear(diceOrder, emptyDiceOrder, this.size)) {
-          dice.style.order = emptyDiceOrder;
-          emptyDice.style.order = diceOrder;
+        const emptyPuzzle = document.querySelector('.puzzle--empty');
+        const puzzleOrder = +puzzle.style.order;
+        const emptyPuzzleOrder = +emptyPuzzle.style.order;
+        if (this._isEmptyNear(puzzleOrder, emptyPuzzleOrder, this.size)) {
+          puzzle.style.order = emptyPuzzleOrder;
+          emptyPuzzle.style.order = puzzleOrder;
           this.game.moves++;
           [
-            this.game.boardState[0][diceOrder - 1],
-            this.game.boardState[0][emptyDiceOrder - 1],
+            this.game.boardState[0][puzzleOrder - 1],
+            this.game.boardState[0][emptyPuzzleOrder - 1],
           ] = [
-            this.game.boardState[0][emptyDiceOrder - 1],
-            this.game.boardState[0][diceOrder - 1],
+            this.game.boardState[0][emptyPuzzleOrder - 1],
+            this.game.boardState[0][puzzleOrder - 1],
           ];
           this.game.panelObj.movesValue.textContent = this.game.moves;
           this._checkWin();
