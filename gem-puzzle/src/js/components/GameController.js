@@ -20,7 +20,7 @@ export default class GameController {
       for (let i = 1; i <= 10; i++) {
         leaders.push({
           position: i,
-          name: 'auto',
+          name: 'empty',
           time: Number.MAX_SAFE_INTEGER,
           moves: Number.MAX_SAFE_INTEGER,
         });
@@ -176,10 +176,49 @@ export default class GameController {
       'click',
       this._handleLoad.bind(this)
     );
+    this.game.menuObj.leaders.addEventListener(
+      'click',
+      this._handleLeaders.bind(this)
+    );
     this.game.boardObj.board.addEventListener(
       'click',
       this._handleMoves.bind(this)
     );
+  }
+
+  _handleLeaders(e) {
+    const table = document.createElement('table');
+    const th = document.createElement('tr');
+    const thPosition = document.createElement('th');
+    thPosition.textContent = 'Position';
+    const thName = document.createElement('th');
+    thName.textContent = 'Name';
+    const thTime = document.createElement('th');
+    thTime.textContent = 'Time';
+    const thMoves = document.createElement('th');
+    thMoves.textContent = 'Moves';
+
+    th.append(thPosition, thName, thTime, thMoves);
+    table.append(th);
+
+    this.leaders.forEach((leader) => {
+      const tr = document.createElement('tr');
+      const tdPosition = document.createElement('td');
+      tdPosition.textContent = leader.position;
+      const tdName = document.createElement('td');
+      tdName.textContent = leader.name;
+      const tdTime = document.createElement('td');
+      tdTime.textContent =
+        leader.time === Number.MAX_SAFE_INTEGER ? '' : leader.time;
+      const tdMoves = document.createElement('td');
+      tdMoves.textContent =
+        leader.moves === Number.MAX_SAFE_INTEGER ? '' : leader.moves;
+      tr.append(tdPosition, tdName, tdTime, tdMoves);
+      table.append(tr);
+    });
+
+    this.modal = new Modal('modal-leaders');
+    this.modal.buildModal(table);
   }
 
   _handleSave(e) {
