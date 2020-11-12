@@ -109,12 +109,20 @@ export default class GameController {
     const index = this.leaders.findIndex(
       (item) => this.game.moves < item.moves
     );
-    this.leaders[index] = {
-      position: leaders[index].position,
-      name: name || 'Unknown',
-      moves: this.game.moves,
-      time: this.game.time,
-    };
+    this.leaders = this.leaders.map((item, i, arr) => {
+      if (i === index) {
+        return {
+          position: leaders[index].position,
+          name: name || 'Unknown',
+          moves: this.game.moves,
+          time: this.game.time,
+        };
+      } else if (i > index) {
+        return arr[i - 1];
+      } else {
+        return item;
+      }
+    });
     this.storage.set('leaders', this.leaders);
   }
 
