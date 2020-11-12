@@ -7,6 +7,27 @@ export default class GameController {
     this.modal = undefined;
     this.size = 4;
     this.isPause = false;
+    this.leaders = this._generateLeaders();
+    this.name = 'Unknown';
+  }
+
+  _generateLeaders() {
+    let leaders = [];
+    const leadersStorage = this.storage.get('leaders');
+    if (leadersStorage) {
+      leaders = leadersStorage;
+    } else {
+      for (let i = 1; i <= 10; i++) {
+        leaders.push({
+          position: i,
+          name: 'auto',
+          time: Number.MAX_SAFE_INTEGER,
+          moves: Number.MAX_SAFE_INTEGER,
+        });
+      }
+      this.storage.set('leaders', leaders);
+    }
+    return leaders;
   }
 
   _generateSizes() {
@@ -68,13 +89,66 @@ export default class GameController {
     return false;
   }
 
+  _isLeaderResult() {
+    const leaders = this.storage.get('leaders');
+    if (leaders) {
+      this.leaders.push([...leaders]);
+    }
+
+    const index = this.leaders.findIndex((item) => {
+      return this.game.moves < item.moves;
+    });
+    return index !== -1;
+  }
+
+  _addLeader(name) {
+    const leaders = this.storage.get('leaders');
+    if (leaders) {
+      this.leaders.push([...leaders]);
+    }
+    const index = this.leaders.findIndex(
+      (item) => this.game.moves < item.moves
+    );
+    this.leaders[index] = {
+      position: leaders[index].position,
+      name: name || 'Unknown',
+      moves: this.game.moves,
+      time: this.game.time,
+    };
+    this.storage.set('leaders', this.leaders);
+  }
+
   _showWin() {
     const minutes = Math.floor(this.game.time / 60);
     const seconds = this.game.time - minutes * 60;
 
-    alert(
-      `Ура! Вы решили головоломку за ${minutes}:${seconds} и ${this.game.moves} ходов`
-    );
+    const win = document.createElement('div');
+    const winMessage = document.createElement('div');
+    winMessage.classList.add('win__message');
+    winMessage.textContent = `Ура! Вы решили головоломку за ${minutes}:${seconds} и ${this.game.moves} ходов`;
+    win.classList.add('win');
+    win.append(winMessage);
+    if (this._isLeaderResult()) {
+      const winInputName = document.createElement('input');
+      winInputName.addEventListener('change', this._handleWinInput.bind(this));
+      const winLeaderSave = document.createElement('button');
+      winLeaderSave.textContent = 'Save';
+      winLeaderSave.addEventListener('click', this._handleAddLeader.bind(this));
+      win.append(winInputName);
+      win.append(winLeaderSave);
+    }
+    this.modal = new Modal('win-modal');
+    this.modal.buildModal(win);
+  }
+
+  _handleWinInput(e) {
+    const winInputValue = e.target.value;
+    this.name = winInputValue;
+  }
+
+  _handleAddLeader(e) {
+    this._addLeader(this.name);
+    this.modal.closeModal(e, true);
   }
 
   _isEmptyNear(order, emptyOrder, size) {
