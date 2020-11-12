@@ -10,14 +10,21 @@ export default class Game {
     this.moves = 0;
     this.boardState = [];
     this.size = 4;
-    this.timeInterval = this._startTimer();
+    this.timeInterval = null;
+    this._initScreen();
+    this.isPause = false;
   }
 
   start(size) {
     this.size = size;
+    this._clearScreen();
     this._stopTimer();
     this._initScreen(size);
     this._startTimer();
+  }
+
+  _clearScreen() {
+    this.screenObj.screen.remove();
   }
 
   _isSolutionExist(size, arr) {
@@ -59,19 +66,21 @@ export default class Game {
   }
 
   _handleMoves(e) {
-    const dice = e.target;
-    if (
-      dice.classList.contains('dice') &&
-      !dice.classList.contains('dice--empty')
-    ) {
-      const emptyDice = document.querySelector('.dice--empty');
-      const diceOrder = +dice.style.order;
-      const emptyDiceOrder = +emptyDice.style.order;
-      if (this._isEmptyNear(diceOrder, emptyDiceOrder, this.size)) {
-        dice.style.order = emptyDiceOrder;
-        emptyDice.style.order = diceOrder;
-        this.moves++;
-        this.panelObj.movesValue.textContent = this.moves;
+    if (!this.isPause) {
+      const dice = e.target;
+      if (
+        dice.classList.contains('dice') &&
+        !dice.classList.contains('dice--empty')
+      ) {
+        const emptyDice = document.querySelector('.dice--empty');
+        const diceOrder = +dice.style.order;
+        const emptyDiceOrder = +emptyDice.style.order;
+        if (this._isEmptyNear(diceOrder, emptyDiceOrder, this.size)) {
+          dice.style.order = emptyDiceOrder;
+          emptyDice.style.order = diceOrder;
+          this.moves++;
+          this.panelObj.movesValue.textContent = this.moves;
+        }
       }
     }
   }
@@ -118,12 +127,42 @@ export default class Game {
 
   _startTimer() {
     return setInterval(() => {
-      this.time++;
-      this.panelObj.timeValue.textContent = this.time;
+      if (!this.isPause) {
+        this.time++;
+        this.panelObj.timeValue.textContent = this.time;
+      }
     }, 1000);
   }
 
   _stopTimer() {
     clearInterval(this.timeInterval);
+  }
+
+  pause() {
+    this.isPause = !this.isPause;
+  }
+
+  set moves(moves) {
+    this._moves = moves;
+  }
+
+  get moves() {
+    return this._moves;
+  }
+
+  set size(size) {
+    this._size = size;
+  }
+
+  get size() {
+    return this._size;
+  }
+
+  set boardState(boardState) {
+    this._boardState = boardState;
+  }
+
+  get boardState() {
+    return this._boardState;
   }
 }

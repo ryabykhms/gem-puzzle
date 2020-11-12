@@ -1,6 +1,12 @@
 export default class Menu {
   constructor() {
-    this.menu = this._createItems();
+    const { menu, newGame, pause, save, load, leaders } = this._createItems();
+    this.menu = menu;
+    this.newGame = newGame;
+    this.pause = pause;
+    this.save = save;
+    this.load = load;
+    this.leaders = leaders;
   }
 
   _createItems() {
@@ -22,7 +28,7 @@ export default class Menu {
     leaders.classList.add('menu__item', 'leaders');
     leaders.textContent = 'Leaders';
     menu.append(newGame, pause, save, load, leaders);
-    return menu;
+    return { menu, newGame, pause, save, load, leaders };
   }
 
   get menu() {
