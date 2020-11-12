@@ -136,6 +136,9 @@ export default class Game {
   }
 
   _initScreen(size, isReload) {
+    if (this.screenObj) {
+      this.screenObj.screen.remove();
+    }
     if (!isReload) {
       this._initBoardState(size);
       this.time = 0;
@@ -144,7 +147,6 @@ export default class Game {
     this._initWinState(size);
     const dices = this._initDices(size);
     this.boardObj = new Board(size, dices);
-    // this.boardObj.board.addEventListener('click', this._handleMoves.bind(this));
     this.panelObj = new Panel();
     this.panelObj.movesValue.textContent = this.moves;
     this.panelObj.timeValue.textContent = this.time;
@@ -152,12 +154,42 @@ export default class Game {
     if (!isMenuExists) {
       this.menuObj = new Menu();
     }
+
     this.screenObj = new Screen(
       this.menuObj.menu,
       this.panelObj.panel,
       this.boardObj.board
     );
     document.body.prepend(this.screenObj.screen);
+    const domBoard = document.querySelector('.board');
+    const widthBoard = domBoard.clientWidth;
+    const heightBoard = domBoard.clientHeight;
+    const imageRandNumber = Math.floor(Math.random() * 150 + 1);
+    const imageUrl = `../assets/images/box/${imageRandNumber}.jpg`;
+    const div = document.createElement('div');
+    const title = document.createElement('div');
+    title.textContent = 'Result:';
+    div.append(title);
+    const img = document.createElement('img');
+    img.src = imageUrl;
+    img.width = widthBoard;
+    img.height = heightBoard;
+    div.append(img);
+    this.screenObj.screen.append(div);
+    document.querySelectorAll('.dice').forEach((dice, i) => {
+      const width = dice.clientWidth;
+      const height = dice.clientHeight;
+      dice.style.backgroundImage = `url(${imageUrl})`;
+      dice.style.backgroundSize = `${widthBoard}px ${heightBoard}px`;
+      let left = width * ((this.boardState[0][i] - 1) % size);
+      let top = height * Math.floor((this.boardState[0][i] - 1) / size);
+      if (dice.classList.contains('dice--empty')) {
+        left = width * ((this.boardState[0].length - 1) % size);
+        top = height * Math.floor((this.boardState[0].length - 1) / size);
+        dice.style.opacity = 0.3;
+      }
+      dice.style.backgroundPosition = `-${left}px -${top}px`;
+    });
   }
 
   _initWinState(boardSize) {
@@ -181,6 +213,7 @@ export default class Game {
     const dices = [];
     const diceSize = Math.round(100 / boardSize) - 2;
     const state = this.boardState[0];
+
     state.forEach((item, i) => {
       const dice = new Dice(diceSize, item, i + 1, item === 0).dice;
       dices.push(dice);
