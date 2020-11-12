@@ -24,7 +24,8 @@ export default class Game {
   }
 
   _clearScreen() {
-    this.screenObj.screen.remove();
+    this.screenObj.panel.remove();
+    this.screenObj.board.remove();
   }
 
   _isSolutionExist(size, arr) {
@@ -100,12 +101,17 @@ export default class Game {
     this.boardObj = new Board(size, dices);
     this.boardObj.board.addEventListener('click', this._handleMoves.bind(this));
     this.panelObj = new Panel();
-    this.menuObj = new Menu();
+    const isMenuExists = this.menuObj !== undefined;
+    if (!isMenuExists) {
+      this.menuObj = new Menu();
+    }
     this.screenObj = new Screen(
       this.menuObj.menu,
       this.panelObj.panel,
       this.boardObj.board
     );
+    this.time = 0;
+    this.moves = 0;
     document.body.prepend(this.screenObj.screen);
   }
 
@@ -122,10 +128,10 @@ export default class Game {
 
   _startTimer() {
     clearInterval(this.timeInterval);
-    this.timeInterval = this._startTimer();
+    this.timeInterval = this._newTimer();
   }
 
-  _startTimer() {
+  _newTimer() {
     return setInterval(() => {
       if (!this.isPause) {
         this.time++;

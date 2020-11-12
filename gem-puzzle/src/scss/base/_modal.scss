@@ -1,0 +1,71 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: $color-overlay;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: all 0.5s ease;
+}
+
+.modal {
+  position: relative;
+  border-radius: 10px;
+  background-color: $color-light-s;
+  width: 675px;
+  min-height: 120px;
+  max-height: 90%;
+  overflow: auto;
+  @include media-tablet {
+    width: 90%;
+  }
+  transition: all 0.5s ease;
+}
+
+.modal-wrapper {
+  position: relative;
+  width: 740px;
+  min-height: 120px;
+  max-height: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @include media-tablet {
+    width: 100%;
+  }
+}
+
+.modal__close-icon {
+  position: absolute;
+  top: -50px;
+  right: -10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 2px solid $color-primary;
+  padding: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  transition: all 0.5s ease;
+  cursor: pointer;
+  svg {
+    pointer-events: none;
+  }
+  &:hover {
+    background: #fddcc4;
+  }
+  @include media-tablet {
+    right: 5px;
+    top: -60px;
+  }
+}
+
+.modal__close-icon.hover {
+  background: #fddcc4;
+}
