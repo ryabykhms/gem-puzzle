@@ -11,8 +11,9 @@ export default class Game {
     this.boardState = [];
     this.size = 4;
     this.timeInterval = null;
-    this._initScreen();
+    this.winState = [];
     this.isPause = false;
+    this._initScreen();
   }
 
   start(size) {
@@ -39,6 +40,7 @@ export default class Game {
 
   _isSolutionExist(size, arr) {
     let inversion = 0;
+    const isSizeEven = size % 2 === 0;
     arr.forEach((item, i, array) => {
       if (item) {
         for (let j = 0; j < i; ++j)
@@ -46,10 +48,15 @@ export default class Game {
             inversion++;
           }
       } else {
-        inversion += 1 + i / size;
+        if (isSizeEven) {
+          inversion += 1 + i / size;
+        }
+        inversion++;
       }
     });
-    return !(inversion & 1);
+    inversion = Math.round(inversion);
+    const isInversionEven = inversion % 2 === 0;
+    return (isSizeEven && isInversionEven) || (!isSizeEven && !isInversionEven);
   }
 
   _randomGeneration(size) {
@@ -76,7 +83,7 @@ export default class Game {
   }
 
   _handleMoves(e) {
-    if (!this.isPause) {
+    if (!this.isPause && !this._checkWin()) {
       const dice = e.target;
       if (
         dice.classList.contains('dice') &&
@@ -102,6 +109,24 @@ export default class Game {
     }
   }
 
+  _checkWin() {
+    if (this.boardState[0].join() === this.winState[0].join()) {
+      clearInterval(this.timeInterval);
+      this._showWin();
+      return true;
+    }
+    return false;
+  }
+
+  _showWin() {
+    const minutes = Math.floor(this.time / 60);
+    const seconds = this.time - minutes * 60;
+
+    alert(
+      `Ура! Вы решили головоломку за ${minutes}:${seconds} и ${this.moves} ходов`
+    );
+  }
+
   _isEmptyNear(order, emptyOrder, size) {
     const isOrderLeft = order === emptyOrder - 1;
     const isOrderRight = order === emptyOrder + 1;
@@ -116,9 +141,10 @@ export default class Game {
       this.time = 0;
       this.moves = 0;
     }
+    this._initWinState(size);
     const dices = this._initDices(size);
     this.boardObj = new Board(size, dices);
-    this.boardObj.board.addEventListener('click', this._handleMoves.bind(this));
+    // this.boardObj.board.addEventListener('click', this._handleMoves.bind(this));
     this.panelObj = new Panel();
     this.panelObj.movesValue.textContent = this.moves;
     this.panelObj.timeValue.textContent = this.time;
@@ -132,6 +158,17 @@ export default class Game {
       this.boardObj.board
     );
     document.body.prepend(this.screenObj.screen);
+  }
+
+  _initWinState(boardSize) {
+    const state = [];
+    const length = boardSize ** 2;
+    for (let i = 1; i < length; i++) {
+      state.push(i);
+    }
+    state.push(0);
+    this.winState.length = 0;
+    this.winState.push(state);
   }
 
   _initBoardState(boardSize) {

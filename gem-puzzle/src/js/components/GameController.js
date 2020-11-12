@@ -6,6 +6,7 @@ export default class GameController {
     this.sizes = this._generateSizes();
     this.modal = undefined;
     this.size = 4;
+    this.isPause = false;
   }
 
   _generateSizes() {
@@ -26,6 +27,64 @@ export default class GameController {
     this._createHandlers();
   }
 
+  _handleMoves(e) {
+    if (!this.isPause && !this._isWin()) {
+      const dice = e.target;
+      if (
+        dice.classList.contains('dice') &&
+        !dice.classList.contains('dice--empty')
+      ) {
+        const emptyDice = document.querySelector('.dice--empty');
+        const diceOrder = +dice.style.order;
+        const emptyDiceOrder = +emptyDice.style.order;
+        if (this._isEmptyNear(diceOrder, emptyDiceOrder, this.size)) {
+          dice.style.order = emptyDiceOrder;
+          emptyDice.style.order = diceOrder;
+          this.game.moves++;
+          [
+            this.game.boardState[0][diceOrder - 1],
+            this.game.boardState[0][emptyDiceOrder - 1],
+          ] = [
+            this.game.boardState[0][emptyDiceOrder - 1],
+            this.game.boardState[0][diceOrder - 1],
+          ];
+          this.game.panelObj.movesValue.textContent = this.game.moves;
+          this._checkWin();
+        }
+      }
+    }
+  }
+
+  _isWin() {
+    return this.game.boardState[0].join() === this.game.winState[0].join();
+  }
+
+  _checkWin() {
+    if (this._isWin()) {
+      clearInterval(this.game.timeInterval);
+      this._showWin();
+      return true;
+    }
+    return false;
+  }
+
+  _showWin() {
+    const minutes = Math.floor(this.game.time / 60);
+    const seconds = this.game.time - minutes * 60;
+
+    alert(
+      `Ура! Вы решили головоломку за ${minutes}:${seconds} и ${this.game.moves} ходов`
+    );
+  }
+
+  _isEmptyNear(order, emptyOrder, size) {
+    const isOrderLeft = order === emptyOrder - 1;
+    const isOrderRight = order === emptyOrder + 1;
+    const isOrderAbove = order === emptyOrder - size;
+    const isOrderBelow = order === emptyOrder + size;
+    return isOrderAbove || isOrderBelow || isOrderLeft || isOrderRight;
+  }
+
   _createHandlers() {
     this.game.menuObj.newGame.addEventListener(
       'click',
@@ -42,6 +101,10 @@ export default class GameController {
     this.game.menuObj.load.addEventListener(
       'click',
       this._handleLoad.bind(this)
+    );
+    this.game.boardObj.board.addEventListener(
+      'click',
+      this._handleMoves.bind(this)
     );
   }
 
@@ -93,12 +156,16 @@ export default class GameController {
     e.preventDefault();
     if (this.modal !== undefined) {
       this.modal.closeModal(e, true);
-      console.log(this.size);
       this.game.start(this.size);
+      this.game.boardObj.board.addEventListener(
+        'click',
+        this._handleMoves.bind(this)
+      );
     }
   }
 
   _handlePause(e) {
     this.game.pause();
+    this.isPause = !this.isPause;
   }
 }
