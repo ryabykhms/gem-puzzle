@@ -1,0 +1,5 @@
+.menu {
+  width: 300px;
+  @include flex-center();
+  justify-content: space-between;
+}

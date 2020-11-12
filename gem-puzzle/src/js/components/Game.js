@@ -1,5 +1,6 @@
 import Board from './Board';
 import Dice from './Dice';
+import Menu from './Menu';
 import Panel from './Panel';
 import Screen from './Screen';
 
@@ -90,7 +91,12 @@ export default class Game {
     this.boardObj = new Board(size, dices);
     this.boardObj.board.addEventListener('click', this._handleMoves.bind(this));
     this.panelObj = new Panel();
-    this.screenObj = new Screen(this.panelObj.panel, this.boardObj.board);
+    this.menuObj = new Menu();
+    this.screenObj = new Screen(
+      this.menuObj.menu,
+      this.panelObj.panel,
+      this.boardObj.board
+    );
     document.body.prepend(this.screenObj.screen);
   }
 

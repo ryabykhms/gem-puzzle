@@ -1,14 +1,14 @@
 export default class Screen {
-  constructor(panel, board) {
+  constructor(menu, panel, board) {
     this.panel = panel;
     this.board = board;
-    this.screen = this._createScreen(panel, board);
+    this.screen = this._createScreen(menu, panel, board);
   }
 
-  _createScreen(panel, board) {
+  _createScreen(menu, panel, board) {
     const screen = document.createElement('div');
     screen.classList.add('screen');
-    screen.append(panel, board);
+    screen.append(menu, panel, board);
     return screen;
   }
 
