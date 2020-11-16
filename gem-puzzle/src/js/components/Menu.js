@@ -1,12 +1,21 @@
 export default class Menu {
   constructor() {
-    const { menu, newGame, pause, save, load, leaders } = this._createItems();
+    const {
+      menu,
+      newGame,
+      pause,
+      save,
+      load,
+      leaders,
+      giveUp,
+    } = this._createItems();
     this.menu = menu;
     this.newGame = newGame;
     this.pause = pause;
     this.save = save;
     this.load = load;
     this.leaders = leaders;
+    this.giveUp = giveUp;
   }
 
   _createItems() {
@@ -27,8 +36,11 @@ export default class Menu {
     const leaders = document.createElement('button');
     leaders.classList.add('menu__item', 'leaders', 'button');
     leaders.textContent = 'Leaders';
-    menu.append(newGame, pause, save, load, leaders);
-    return { menu, newGame, pause, save, load, leaders };
+    const giveUp = document.createElement('button');
+    giveUp.classList.add('menu__item', 'give-up', 'button');
+    giveUp.textContent = 'Give Up';
+    menu.append(newGame, pause, save, load, leaders, giveUp);
+    return { menu, newGame, pause, save, load, leaders, giveUp };
   }
 
   get menu() {

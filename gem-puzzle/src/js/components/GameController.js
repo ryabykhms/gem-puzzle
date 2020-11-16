@@ -11,6 +11,7 @@ export default class GameController {
     this.leaders = this._generateLeaders();
     this.name = 'Unknown';
     this.isAnimated = false;
+    this.isGiveUp = false;
   }
 
   _generateLeaders() {
@@ -51,7 +52,7 @@ export default class GameController {
   }
 
   _handleMoves(e) {
-    if (!this.isPause && !this._isWin() && !this.isAnimated) {
+    if (!this.isPause && !this._isWin() && !this.isAnimated && !this.isGiveUp) {
       const puzzle = e.target;
       if (
         puzzle.classList.contains('puzzle') &&
@@ -238,6 +239,10 @@ export default class GameController {
       'click',
       this._handleLeaders.bind(this)
     );
+    this.game.menuObj.giveUp.addEventListener(
+      'click',
+      this._handleGiveUp.bind(this)
+    );
     this.game.boardObj.board.addEventListener(
       'click',
       this._handleMoves.bind(this)
@@ -247,6 +252,40 @@ export default class GameController {
       'animationend',
       this._handleAnimationEnd.bind(this)
     );
+  }
+
+  _handleGiveUp(e) {
+    if (!this.isGiveUp) {
+      this.isGiveUp = true;
+      let counter = 0;
+      this.game.boardObj.puzzles
+        .sort((a, b) => {
+          return +a.textContent - +b.textContent;
+        })
+        .forEach((puzzle, i, array) => {
+          puzzle.style.transition = 'order 1s ease';
+          if (puzzle.classList.contains('puzzle--empty')) {
+            puzzle.style.order = array.length;
+          } else {
+            counter += puzzle.style.order != i ? 1 : 0;
+            puzzle.style.order = i;
+          }
+        });
+
+      counter++;
+      let transitionCounter = 0;
+      this.game.boardObj.board.addEventListener('transitionend', (e) => {
+        transitionCounter++;
+        if (e.propertyName == 'order' && counter === transitionCounter) {
+          this.game.stopTimer();
+          this.modal = new Modal('modal-end');
+          const gameOver = document.createElement('div');
+          gameOver.classList.add('game-over');
+          gameOver.textContent = 'Game Over!';
+          this.modal.buildModal(gameOver);
+        }
+      });
+    }
   }
 
   _handleLeaders(e) {
@@ -307,6 +346,7 @@ export default class GameController {
       'click',
       this._handleMoves.bind(this)
     );
+    this.isGiveUp = false;
   }
 
   _handleNewGame(e) {
@@ -318,6 +358,7 @@ export default class GameController {
     newGameTitle.textContent = 'Start New Game';
     const select = document.createElement('select');
     select.classList.add('new-game__select', 'new-game__board-size');
+    this.isGiveUp = false;
     this.sizes.forEach((size) => {
       const option = document.createElement('option');
       option.value = size.value;

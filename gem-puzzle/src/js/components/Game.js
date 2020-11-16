@@ -21,7 +21,7 @@ export default class Game {
   start(size) {
     this.size = size;
     this._clearScreen();
-    this._stopTimer();
+    this.stopTimer();
     this.imageUrl = this._generateImageUrl(this.imagesCount);
     this._initScreen(size);
     this._startTimer();
@@ -224,7 +224,7 @@ export default class Game {
     }, 1000);
   }
 
-  _stopTimer() {
+  stopTimer() {
     clearInterval(this.timeInterval);
   }
 
