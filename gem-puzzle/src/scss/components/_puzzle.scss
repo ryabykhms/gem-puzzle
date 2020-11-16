@@ -4,5 +4,8 @@
   border: 1px solid #000;
   &--empty {
     border-color: transparent;
+    opacity: 1;
+    background: transparent !important;
   }
+  // transition: transform 0.5s ease;
 }

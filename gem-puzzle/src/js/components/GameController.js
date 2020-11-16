@@ -10,6 +10,7 @@ export default class GameController {
     this.audio = audio;
     this.leaders = this._generateLeaders();
     this.name = 'Unknown';
+    this.isAnimated = false;
   }
 
   _generateLeaders() {
@@ -50,7 +51,7 @@ export default class GameController {
   }
 
   _handleMoves(e) {
-    if (!this.isPause && !this._isWin()) {
+    if (!this.isPause && !this._isWin() && !this.isAnimated) {
       const puzzle = e.target;
       if (
         puzzle.classList.contains('puzzle') &&
@@ -61,21 +62,48 @@ export default class GameController {
         const emptyPuzzleOrder = +emptyPuzzle.style.order;
         if (this._isEmptyNear(puzzleOrder, emptyPuzzleOrder, this.size)) {
           this.audio.play();
-          puzzle.style.order = emptyPuzzleOrder;
-          emptyPuzzle.style.order = puzzleOrder;
-          this.game.moves++;
-          [
-            this.game.boardState[0][puzzleOrder - 1],
-            this.game.boardState[0][emptyPuzzleOrder - 1],
-          ] = [
-            this.game.boardState[0][emptyPuzzleOrder - 1],
-            this.game.boardState[0][puzzleOrder - 1],
-          ];
-          this.game.panelObj.movesValue.textContent = this.game.moves;
-          this._checkWin();
+          let translate = '';
+          if (this._isOrderAbove(puzzleOrder, emptyPuzzleOrder, this.size)) {
+            translate = { transform: `translateY(${puzzle.clientHeight}px)` };
+          }
+          if (this._isOrderBelow(puzzleOrder, emptyPuzzleOrder, this.size)) {
+            translate = { transform: `translateY(-${puzzle.clientHeight}px)` };
+          }
+          if (this._isOrderLeft(puzzleOrder, emptyPuzzleOrder, this.size)) {
+            translate = { transform: `translateX(${puzzle.clientWidth}px)` };
+          }
+          if (this._isOrderRight(puzzleOrder, emptyPuzzleOrder, this.size)) {
+            translate = { transform: `translateX(-${puzzle.clientWidth}px)` };
+          }
+          this.isAnimated = true;
+          const animate = puzzle.animate([translate], 500);
+          animate.addEventListener('finish', (e) => {
+            this._handleAnimationEnd(
+              puzzle,
+              emptyPuzzle,
+              puzzleOrder,
+              emptyPuzzleOrder
+            );
+            this.isAnimated = false;
+          });
         }
       }
     }
+  }
+
+  _handleAnimationEnd(puzzle, emptyPuzzle, puzzleOrder, emptyPuzzleOrder) {
+    puzzle.style.order = emptyPuzzleOrder;
+    emptyPuzzle.style.order = puzzleOrder;
+    this.game.moves++;
+    [
+      this.game.boardState[0][puzzleOrder - 1],
+      this.game.boardState[0][emptyPuzzleOrder - 1],
+    ] = [
+      this.game.boardState[0][emptyPuzzleOrder - 1],
+      this.game.boardState[0][puzzleOrder - 1],
+    ];
+    this.game.panelObj.movesValue.textContent = this.game.moves;
+    this._checkWin();
   }
 
   _isWin() {
@@ -166,11 +194,27 @@ export default class GameController {
   }
 
   _isEmptyNear(order, emptyOrder, size) {
-    const isOrderLeft = order === emptyOrder - 1;
-    const isOrderRight = order === emptyOrder + 1;
-    const isOrderAbove = order === emptyOrder - size;
-    const isOrderBelow = order === emptyOrder + size;
+    const isOrderLeft = this._isOrderLeft(order, emptyOrder);
+    const isOrderRight = this._isOrderRight(order, emptyOrder);
+    const isOrderAbove = this._isOrderAbove(order, emptyOrder, size);
+    const isOrderBelow = this._isOrderBelow(order, emptyOrder, size);
     return isOrderAbove || isOrderBelow || isOrderLeft || isOrderRight;
+  }
+
+  _isOrderLeft(order, emptyOrder) {
+    return order === emptyOrder - 1;
+  }
+
+  _isOrderRight(order, emptyOrder) {
+    return order === emptyOrder + 1;
+  }
+
+  _isOrderAbove(order, emptyOrder, size) {
+    return order === emptyOrder - size;
+  }
+
+  _isOrderBelow(order, emptyOrder, size) {
+    return order === emptyOrder + size;
   }
 
   _createHandlers() {
@@ -197,6 +241,11 @@ export default class GameController {
     this.game.boardObj.board.addEventListener(
       'click',
       this._handleMoves.bind(this)
+    );
+
+    this.game.boardObj.board.addEventListener(
+      'animationend',
+      this._handleAnimationEnd.bind(this)
     );
   }
 
