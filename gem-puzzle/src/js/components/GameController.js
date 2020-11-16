@@ -1,12 +1,13 @@
 import Modal from './Modal';
 export default class GameController {
-  constructor(game, storage) {
+  constructor(game, storage, audio) {
     this.game = game;
     this.storage = storage;
     this.sizes = this._generateSizes();
     this.modal = undefined;
     this.size = 4;
     this.isPause = false;
+    this.audio = audio;
     this.leaders = this._generateLeaders();
     this.name = 'Unknown';
   }
@@ -59,6 +60,7 @@ export default class GameController {
         const puzzleOrder = +puzzle.style.order;
         const emptyPuzzleOrder = +emptyPuzzle.style.order;
         if (this._isEmptyNear(puzzleOrder, emptyPuzzleOrder, this.size)) {
+          this.audio.play();
           puzzle.style.order = emptyPuzzleOrder;
           emptyPuzzle.style.order = puzzleOrder;
           this.game.moves++;
