@@ -87,33 +87,6 @@ export default class Game {
     return current;
   }
 
-  _handleMoves(e) {
-    if (!this.isPause && !this._checkWin()) {
-      const puzzle = e.target;
-      if (
-        puzzle.classList.contains('puzzle') &&
-        !puzzle.classList.contains('puzzle--empty')
-      ) {
-        const emptypuzzle = document.querySelector('.puzzle--empty');
-        const puzzleOrder = +puzzle.style.order;
-        const emptypuzzleOrder = +emptypuzzle.style.order;
-        if (this._isEmptyNear(puzzleOrder, emptypuzzleOrder, this.size)) {
-          puzzle.style.order = emptypuzzleOrder;
-          emptypuzzle.style.order = puzzleOrder;
-          this.moves++;
-          [
-            this.boardState[0][puzzleOrder - 1],
-            this.boardState[0][emptypuzzleOrder - 1],
-          ] = [
-            this.boardState[0][emptypuzzleOrder - 1],
-            this.boardState[0][puzzleOrder - 1],
-          ];
-          this.panelObj.movesValue.textContent = this.moves;
-        }
-      }
-    }
-  }
-
   _checkWin() {
     if (this.boardState[0].join() === this.winState[0].join()) {
       clearInterval(this.timeInterval);
