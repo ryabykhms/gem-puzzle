@@ -35,6 +35,7 @@ export default class Game {
     this.imageUrl = imageUrl;
     this._clearScreen();
     this._initScreen(size, true);
+    this._startTimer();
   }
 
   _clearScreen() {

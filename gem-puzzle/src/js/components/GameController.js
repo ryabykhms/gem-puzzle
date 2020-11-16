@@ -92,7 +92,7 @@ export default class GameController {
   _isLeaderResult() {
     const leaders = this.storage.get('leaders');
     if (leaders) {
-      this.leaders.push([...leaders]);
+      this.leaders.push(...leaders);
     }
 
     const index = this.leaders.findIndex((item) => {
@@ -103,21 +103,25 @@ export default class GameController {
 
   _addLeader(name) {
     const leaders = this.storage.get('leaders');
-    if (leaders) {
-      this.leaders.push([...leaders]);
-    }
+    let position = 1;
     const index = this.leaders.findIndex(
       (item) => this.game.moves < item.moves
     );
+
+    if (leaders) {
+      this.leaders = leaders;
+      position = leaders[index].position;
+    }
     this.leaders = this.leaders.map((item, i, arr) => {
       if (i === index) {
         return {
-          position: leaders[index].position,
+          position: position,
           name: name || 'Unknown',
           moves: this.game.moves,
           time: this.game.time,
         };
       } else if (i > index) {
+        arr[i - 1].position += 1;
         return arr[i - 1];
       } else {
         return item;

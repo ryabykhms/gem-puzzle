@@ -11,7 +11,7 @@ export default class GameStorage {
     try {
       this.storage.setItem(key, JSON.stringify(value));
     } catch (e) {
-      if (e == QUOTA_EXCEEDED_ERR) {
+      if (e) {
         alert('Limit is exceeded');
       }
     }
