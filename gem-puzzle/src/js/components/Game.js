@@ -174,8 +174,6 @@ export default class Game {
     const domBoard = document.querySelector('.board');
     const widthBoard = domBoard.clientWidth;
     const heightBoard = domBoard.clientHeight;
-    // const imageRandNumber = Math.floor(Math.random() * 150 + 1);
-    // const imageUrl = `../assets/images/box/${imageRandNumber}.jpg`;
     const div = document.createElement('div');
     const title = document.createElement('div');
     title.textContent = 'Result:';

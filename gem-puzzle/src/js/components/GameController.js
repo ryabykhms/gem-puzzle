@@ -245,6 +245,10 @@ export default class GameController {
     );
     this.game.reload(size, moves, time, board, imageUrl);
     this.size = size;
+    this.game.boardObj.board.addEventListener(
+      'click',
+      this._handleMoves.bind(this)
+    );
   }
 
   _handleNewGame(e) {
