@@ -2,4 +2,13 @@
   @include flex-center();
   width: 300px;
   justify-content: space-between;
+  font-size: 2rem;
+}
+
+.time__title {
+  font-weight: bold;
+}
+
+.moves__title {
+  font-weight: bold;
 }

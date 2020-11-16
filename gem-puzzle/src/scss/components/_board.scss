@@ -2,6 +2,10 @@
   @include flex-center();
   flex-wrap: wrap;
   column-gap: 1%;
-  width: 300px;
-  height: 300px;
+  width: 400px;
+  height: 400px;
+  margin-top: 10px;
+  border-radius: 10px;
+  box-shadow: 0 0 5px $color-accent;
+  padding: 10px;
 }

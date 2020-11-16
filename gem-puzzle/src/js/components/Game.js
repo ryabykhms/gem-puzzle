@@ -149,10 +149,23 @@ export default class Game {
     const widthBoard = domBoard.clientWidth;
     const heightBoard = domBoard.clientHeight;
     const div = document.createElement('div');
-    const title = document.createElement('div');
-    title.textContent = 'Result:';
+    div.classList.add('result');
+    const title = document.createElement('button');
+    title.classList.add('result__title', 'button');
+    title.textContent = 'Show Preview';
+    title.addEventListener('click', (e) => {
+      document
+        .querySelector('.result__image')
+        .classList.toggle('result__image--show');
+      if (e.target.textContent === 'Show Preview') {
+        e.target.textContent = 'Hide Preview';
+      } else {
+        e.target.textContent = 'Show Preview';
+      }
+    });
     div.append(title);
     const img = document.createElement('img');
+    img.classList.add('result__image');
     img.src = this.imageUrl;
     img.width = widthBoard;
     img.height = heightBoard;

@@ -172,8 +172,10 @@ export default class GameController {
     win.append(winMessage);
     if (this._isLeaderResult()) {
       const winInputName = document.createElement('input');
+      winInputName.classList.add('win__input');
       winInputName.addEventListener('change', this._handleWinInput.bind(this));
       const winLeaderSave = document.createElement('button');
+      winLeaderSave.classList.add('button');
       winLeaderSave.textContent = 'Save';
       winLeaderSave.addEventListener('click', this._handleAddLeader.bind(this));
       win.append(winInputName);
@@ -251,6 +253,7 @@ export default class GameController {
 
   _handleLeaders(e) {
     const table = document.createElement('table');
+    table.classList.add('table-leaders');
     const th = document.createElement('tr');
     const thPosition = document.createElement('th');
     thPosition.textContent = 'Position';
@@ -309,7 +312,12 @@ export default class GameController {
   _handleNewGame(e) {
     this.modal = new Modal('new-modal');
     const form = document.createElement('form');
+    form.classList.add('new-game__form');
+    const newGameTitle = document.createElement('div');
+    newGameTitle.classList.add('new-game__title');
+    newGameTitle.textContent = 'Start New Game';
     const select = document.createElement('select');
+    select.classList.add('new-game__select', 'new-game__board-size');
     this.sizes.forEach((size) => {
       const option = document.createElement('option');
       option.value = size.value;
@@ -323,9 +331,10 @@ export default class GameController {
     this._handleSizes(obj);
     select.addEventListener('change', this._handleSizes.bind(this));
     const button = document.createElement('button');
+    button.classList.add('button', 'button--accent', 'new-game__button');
     button.textContent = 'Start';
     button.addEventListener('click', this._handleStart.bind(this));
-    form.append(select, button);
+    form.append(newGameTitle, select, button);
     this.modal.buildModal(form);
   }
 
@@ -350,5 +359,11 @@ export default class GameController {
   _handlePause(e) {
     this.game.pause();
     this.isPause = !this.isPause;
+    e.target.classList.toggle('button--active', this.isPause);
+    if (this.isPause) {
+      e.target.textContent = 'Resume';
+    } else {
+      e.target.textContent = 'Pause';
+    }
   }
 }
