@@ -87,24 +87,6 @@ export default class Game {
     return current;
   }
 
-  _checkWin() {
-    if (this.boardState[0].join() === this.winState[0].join()) {
-      clearInterval(this.timeInterval);
-      this._showWin();
-      return true;
-    }
-    return false;
-  }
-
-  _showWin() {
-    const minutes = Math.floor(this.time / 60);
-    const seconds = this.time - minutes * 60;
-
-    alert(
-      `Ура! Вы решили головоломку за ${minutes}:${seconds} и ${this.moves} ходов`
-    );
-  }
-
   _isEmptyNear(order, emptyOrder, size) {
     const isOrderLeft = order === emptyOrder - 1;
     const isOrderRight = order === emptyOrder + 1;
@@ -117,6 +99,16 @@ export default class Game {
     const imageRandNumber = Math.floor(Math.random() * 150 + 1);
     const imageUrl = `../assets/images/box/${imageRandNumber}.jpg`;
     return imageUrl;
+  }
+
+  formatTimeFromSeconds(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds - hours * 3600) / 60);
+    const sec = seconds - minutes * 60 - hours * 3600;
+    const hoursString = hours > 9 ? hours : `0${hours}`;
+    const minutesString = minutes > 9 ? minutes : `0${minutes}`;
+    const secString = sec > 9 ? sec : `0${sec}`;
+    return `${hoursString}:${minutesString}:${secString}`;
   }
 
   _initScreen(size, isReload) {
@@ -133,7 +125,7 @@ export default class Game {
     this.boardObj = new Board(size, puzzles);
     this.panelObj = new Panel();
     this.panelObj.movesValue.textContent = this.moves;
-    this.panelObj.timeValue.textContent = this.time;
+    this.panelObj.timeValue.textContent = this.formatTimeFromSeconds(this.time);
     const isMenuExists = this.menuObj !== undefined;
     if (!isMenuExists) {
       this.menuObj = new Menu();
@@ -225,7 +217,9 @@ export default class Game {
     return setInterval(() => {
       if (!this.isPause) {
         this.time++;
-        this.panelObj.timeValue.textContent = this.time;
+        this.panelObj.timeValue.textContent = this.formatTimeFromSeconds(
+          this.time
+        );
       }
     }, 1000);
   }

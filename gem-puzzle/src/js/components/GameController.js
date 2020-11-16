@@ -161,13 +161,11 @@ export default class GameController {
   }
 
   _showWin() {
-    const minutes = Math.floor(this.game.time / 60);
-    const seconds = this.game.time - minutes * 60;
-
     const win = document.createElement('div');
     const winMessage = document.createElement('div');
     winMessage.classList.add('win__message');
-    winMessage.textContent = `Ура! Вы решили головоломку за ${minutes}:${seconds} и ${this.game.moves} ходов`;
+    const resultTime = this.game.formatTimeFromSeconds(this.game.time);
+    winMessage.textContent = `Ура! Вы решили головоломку за ${resultTime} и ${this.game.moves} ходов`;
     win.classList.add('win');
     win.append(winMessage);
     if (this._isLeaderResult()) {
@@ -275,7 +273,9 @@ export default class GameController {
       tdName.textContent = leader.name;
       const tdTime = document.createElement('td');
       tdTime.textContent =
-        leader.time === Number.MAX_SAFE_INTEGER ? '' : leader.time;
+        leader.time === Number.MAX_SAFE_INTEGER
+          ? ''
+          : this.game.formatTimeFromSeconds(leader.time);
       const tdMoves = document.createElement('td');
       tdMoves.textContent =
         leader.moves === Number.MAX_SAFE_INTEGER ? '' : leader.moves;

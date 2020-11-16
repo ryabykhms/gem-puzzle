@@ -8,7 +8,7 @@
 
 .result__image {
   display: none;
-  box-shadow: 0 0 10px 0 $red inset, 0 0 10px 4px $red;
+  box-shadow: 0 0 10px 0 $color-accent inset, 0 0 10px 4px $color-accent;
   margin-top: 10px;
   &--show {
     display: block;
