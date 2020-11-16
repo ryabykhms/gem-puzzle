@@ -168,7 +168,7 @@ export default class Game {
       if (puzzle.classList.contains('puzzle--empty')) {
         left = width * ((this.boardState[0].length - 1) % size);
         top = height * Math.floor((this.boardState[0].length - 1) / size);
-        puzzle.style.opacity = 0.3;
+        puzzle.style.visibility = 'hidden';
       }
       puzzle.style.backgroundPosition = `-${left}px -${top}px`;
     });
