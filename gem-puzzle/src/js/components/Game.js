@@ -6,6 +6,7 @@ import Screen from './Screen';
 
 export default class Game {
   constructor() {
+    this.imagesCount = 150;
     this.time = 0;
     this.moves = 0;
     this.boardState = [];
@@ -13,6 +14,7 @@ export default class Game {
     this.timeInterval = null;
     this.winState = [];
     this.isPause = false;
+    this.imageUrl = this._generateImageUrl(this.imagesCount);
     this._initScreen();
   }
 
@@ -20,15 +22,17 @@ export default class Game {
     this.size = size;
     this._clearScreen();
     this._stopTimer();
+    this.imageUrl = this._generateImageUrl(this.imagesCount);
     this._initScreen(size);
     this._startTimer();
   }
 
-  reload(size, moves, time, boardState) {
+  reload(size, moves, time, boardState, imageUrl) {
     this.boardState = boardState;
     this.time = time;
     this.moves = moves;
     this.size = size;
+    this.imageUrl = imageUrl;
     this._clearScreen();
     this._initScreen(size, true);
   }
@@ -135,6 +139,12 @@ export default class Game {
     return isOrderAbove || isOrderBelow || isOrderLeft || isOrderRight;
   }
 
+  _generateImageUrl(imagesCount) {
+    const imageRandNumber = Math.floor(Math.random() * 150 + 1);
+    const imageUrl = `../assets/images/box/${imageRandNumber}.jpg`;
+    return imageUrl;
+  }
+
   _initScreen(size, isReload) {
     if (this.screenObj) {
       this.screenObj.screen.remove();
@@ -164,14 +174,14 @@ export default class Game {
     const domBoard = document.querySelector('.board');
     const widthBoard = domBoard.clientWidth;
     const heightBoard = domBoard.clientHeight;
-    const imageRandNumber = Math.floor(Math.random() * 150 + 1);
-    const imageUrl = `../assets/images/box/${imageRandNumber}.jpg`;
+    // const imageRandNumber = Math.floor(Math.random() * 150 + 1);
+    // const imageUrl = `../assets/images/box/${imageRandNumber}.jpg`;
     const div = document.createElement('div');
     const title = document.createElement('div');
     title.textContent = 'Result:';
     div.append(title);
     const img = document.createElement('img');
-    img.src = imageUrl;
+    img.src = this.imageUrl;
     img.width = widthBoard;
     img.height = heightBoard;
     div.append(img);
@@ -179,7 +189,7 @@ export default class Game {
     document.querySelectorAll('.puzzle').forEach((puzzle, i) => {
       const width = puzzle.clientWidth;
       const height = puzzle.clientHeight;
-      puzzle.style.backgroundImage = `url(${imageUrl})`;
+      puzzle.style.backgroundImage = `url(${this.imageUrl})`;
       puzzle.style.backgroundSize = `${widthBoard}px ${heightBoard}px`;
       let left = width * ((this.boardState[0][i] - 1) % size);
       let top = height * Math.floor((this.boardState[0][i] - 1) / size);

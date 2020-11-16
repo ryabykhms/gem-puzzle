@@ -235,12 +235,15 @@ export default class GameController {
       moves: this.game.moves,
       time: this.game.time,
       board: this.game.boardState,
+      imageUrl: this.game.imageUrl,
     });
   }
 
   _handleLoad(e) {
-    const { size, moves, time, board } = this.storage.get('last_game');
-    this.game.reload(size, moves, time, board);
+    const { size, moves, time, board, imageUrl } = this.storage.get(
+      'last_game'
+    );
+    this.game.reload(size, moves, time, board, imageUrl);
     this.size = size;
   }
 
