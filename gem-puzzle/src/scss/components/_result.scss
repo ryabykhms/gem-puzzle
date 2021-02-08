@@ -1,0 +1,16 @@
+.result {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.result__image {
+  display: none;
+  box-shadow: 0 0 10px 0 $color-accent inset, 0 0 10px 4px $color-accent;
+  margin-top: 10px;
+  &--show {
+    display: block;
+  }
+}

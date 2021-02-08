@@ -1,0 +1,12 @@
+.puzzle {
+  @include flex-center();
+  background-color: #fff;
+  border: 1px solid #000;
+  border-radius: 10px;
+  cursor: pointer;
+  &--empty {
+    border-color: transparent;
+    opacity: 1;
+    background: transparent;
+  }
+}
